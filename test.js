@@ -1,5 +1,5 @@
 const {doSign, verify, generateKeys} = require('./index');
-const {vsHash, encodeCharCode2Int36} = require('./my-hash');
+const {vsHash, encodeCharCode2Int36} = require('./modules/my-hash');
 
 function randomMessage(len) {
     let codes = [];

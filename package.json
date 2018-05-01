@@ -1,0 +1,31 @@
+{
+  "name": "@skazska/nano-dsa",
+  "version": "0.1.0",
+  "description": "Pure javascript DSA weak implementation",
+  "main": "index.js",
+  "engines": {
+    "node": ">=6.9.2"
+  },
+  "scripts": {
+    "test": "./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skazska/nanoDSA"
+  },
+  "keywords": [
+    "DSA",
+    "cryptography",
+    "tiny"
+  ],
+  "author": "Said Karimov <skazska@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/skazska/nanoDSA/issues"
+  },
+  "homepage": "https://github.com/skazska/nanoDSA#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
