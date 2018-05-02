@@ -15,8 +15,8 @@ function longTest() {
     // const params = { q: 205651, p: 6169531, g: 243430 }; //<-- good
     //need q max 131071? to have 6 digits sign
     // const params = { q: 127481, p: 2294659, g: 262144 }; //<-- good
-    const params  ={ q: 3947, p: 118411, g: 109287 }; //good   <-- most suitable for max (r, s) - 4095 signature to fit in 5 digits (of 36 capacity)
-    // const params = { q: 1021, p: 153151, g: 45535 }; //good   <-- most suitable for max (r, s) - 1023 signature to fit in 4 digits
+    // const params  ={ q: 3947, p: 118411, g: 109287 }; //good   <-- most suitable for max (r, s) - 4095 signature to fit in 5 digits (of 36 capacity)
+    const params = { q: 1021, p: 153151, g: 45535 }; //good   <-- most suitable for max (r, s) - 1023 signature to fit in 4 digits
     // const params = { q: 1009, p: 932317, g: 730099 };  // r * 2^10 + s for represent
     // const params = { q: 941, p: 103511, g: 51305 }; //good
 //const params = generateSharedParams(Math.round(FOUND_PRIMES.length / 3 ), Math.round(FOUND_PRIMES.length * 2 / 3 ));
@@ -27,26 +27,39 @@ function longTest() {
         fails: 0,
         collisions: 0
     };
-    maxS = 0;
-    maxR = 0;
-    maxSR = 0;
+    let maxS = 0;
+    let maxR = 0;
+    let maxPub = 0;
+    let maxPri = 0;
+    let pubKeys = {
+    };
 
     console.log('********** LONG TEST **********');
-    for (let x = 0; x < 30; x++) {
+    for (let x = 0; x < 5000; x++) {
         let keys = generateKeys(params);
-        let keyName = JSON.stringify(keys);
+        // if (!x) keys = {"pub":1,"pri":1021};
+        maxPri = Math.max(keys.pri, maxPri);
+        maxPub = Math.max(keys.pub, maxPub);
+        pubKeys[keys.pub] = (pubKeys[keys.pub] || 0) + 1;
+        let keyName = '' + x + ': ' + JSON.stringify(keys);
         failCnt[keyName] = { tot: 0, fails: 0, collisions: 0 };
         console.log('*** keys', keyName);
         for (let j = 0; j < 8; j++) {
             let charsName = ''+(10+j)+' chars';
             failCnt[keyName][charsName] = {tot: 0, fails: 0, collisions: 0};
-            for (let i = 0; i < 20000; i++) {
+
+            // if (!x) console.log(charsName)
+
+            for (let i = 0; i < 5000; i++) {
                 failCnt.tot += 1;
                 failCnt[keyName].tot += 1;
                 failCnt[keyName][charsName].tot += 1;
 
                 let fail = false;
                 let message = randomMessage(10 + j + 1);
+
+                // if (!x) console.log('sign', message);
+
                 let sign = doSign(params, keys.pri, message, vsHash);
                 let messageToTest = message.slice();
                 let messageToCollide = randomMessage(10 + j + 1);
@@ -56,11 +69,13 @@ function longTest() {
                     maxS = Math.max(maxS, s);
                 });
 
+                // if (!x) console.log('verify', messageToTest);
                 if (!verify(params, keys.pub, sign, messageToTest, vsHash)) {
                     console.log(message, sign, 'failed to verify ', messageToTest, i);
                     fail = true;
                 }
-                if (verify(params, keys.pub, sign, 'SOMEOTHER123', vsHash)) {
+                // if (!x) console.log('verify', messageToTest);
+                if (verify(params, keys.pub, sign, messageToCollide, vsHash)) {
                     // console.log(message, sign, 'failed to verify ', 'SOMEOTHER123', i);
                     if (!failCnt[keyName][charsName]) console.log('*** ', charsName);
                     failCnt.collisions += 1;
@@ -83,28 +98,31 @@ function longTest() {
         ' collisions: ', failCnt.collisions,
         ' collision percent: ', failCnt.collisions/failCnt.tot*100
     );
-    console.log('maxS: ', maxS, 'maxR: ', maxR);
+    console.log('maxS: ', maxS, 'maxR: ', maxR, ' maxPub: ', maxPub, ' maxPri: ', maxPri);
+    let okDup = Object.keys(pubKeys).filter(key => pubKeys[key] > 1);
+    console.log('pubKey dups: ', okDup.length);
 }
 
 longTest();
 
-const params = { q: 1009, p: 932317, g: 730099 };  // r * 2^10 + s for represent
-let keys = {"pub":858450,"pri":816};
+const params = { q: 1021, p: 153151, g: 45535 }; //good   <-- most suitable for max (r, s) - 1023 signature to fit in 4 digits
+//let keys = {"pub":858450,"pri":816};
+let keys = {"pub":1,"pri":1021};
 let sign = 0;
 
 
-// let sign = doSign(params, keys.pri, [1697616], v => v);
+// sign = doSign(params, keys.pri, [1697616], v => v);
 // console.log('sign [1697616]', sign);
-// assert.ok(verify(params, keys.pub, sign, [1697616], v => v), 'verify [1697616] failed');
+// console.log(verify(params, keys.pub, sign, [1697616], v => v), 'verify [1697616] ');
 //
 //
 // sign = doSign(params, keys.pri, [1697616, 46656, 1], v => v);
 // console.log('sign [1697616, 46656, 1]', sign);
-// assert.ok(verify(params, keys.pub, sign, [1697616, 46656, 1], v => v), 'verify [1697616, 46656, 1] failed');
-// assert.ok(!verify(params, keys.pub, sign, [1697616, 46656, 2], v => v), 'verify [1697616, 46656, 2] failed');
-// assert.ok(verify(params, keys.pub, sign, [1697616, 46651, 1], v => v), 'verify [1697616, 46651, 1] failed');
-
-
+// console.log(verify(params, keys.pub, sign, [1697616, 46656, 1], v => v), 'verify [1697616, 46656, 1] ');
+// console.log(verify(params, keys.pub, sign, [1697616, 46656, 2], v => v), 'verify [1697616, 46656, 2] ');
+// console.log(verify(params, keys.pub, sign, [1697616, 46651, 1], v => v), 'verify [1697616, 46651, 1] ');
+//
+//
 // sign = doSign(params, keys.pri, '65FLQJTN66SYC78G4', vsHash);
 // console.log(vsHash('65FLQJTN66SYC78G4'));
 // console.log('sign 65FLQJTN66SYC78G4', sign);

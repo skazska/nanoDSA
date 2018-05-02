@@ -17,9 +17,13 @@ function generateKeys(params) {
     //Choose a secret key x by some random method, where 0 < x < q.
     //Calculate the public key y = g ^ x mod p.
 
-    let priKey = params.q - Math.round(Math.random() * params.q * 2 / 3);
-    let pubKey = nums.modPow(params.g, priKey, params.p);
+    let priKey = 0;
+    let pubKey = 0;
 
+    do {
+        priKey = params.q - Math.round(Math.random() * params.q * 3 / 4);
+        pubKey = nums.modPow(params.g, priKey, params.p);
+    } while (pubKey < 100);
 
     return {
         pub: pubKey,
