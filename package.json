@@ -1,6 +1,6 @@
 {
   "name": "@skazska/nano-dsa",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pure javascript DSA weak implementation",
   "main": "index.js",
   "engines": {
@@ -24,8 +24,6 @@
     "url": "https://github.com/skazska/nanoDSA/issues"
   },
   "homepage": "https://github.com/skazska/nanoDSA#readme",
-  "dependencies": {
-  },
-  "devDependencies": {
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }
