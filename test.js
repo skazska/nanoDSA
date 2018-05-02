@@ -1,12 +1,48 @@
 const {doSign, verify, generateKeys} = require('./index');
-const {vsHash, encodeCharCode2Int36} = require('./modules/my-hash');
 
 function randomMessage(len) {
     let codes = [];
     for (let i = 0; i < len; i++) {
-        codes.push(encodeCharCode2Int36(Math.round(Math.random()*35)));
+        codes.push(Math.round(Math.random()*35));
     }
-    return String.fromCharCode.apply(null, codes);
+    return codes;
+}
+
+const HASH_LEN = 5;
+/**
+ * hashes string value
+ * @param text
+ * @returns {Array}
+ */
+function vsHash(text) {
+    let codes = [];
+    let pos = 0;
+    let partPos = 0;
+    for (let i = 0; i < text.length; i++) {
+        if (!codes[pos]) codes[pos]=[];
+        let code = text[i];
+        if (code !== null) {
+            codes[pos][partPos] = code;
+            partPos += 1;
+        }
+        if (partPos === HASH_LEN) {
+            partPos = 0;
+            pos += 1;
+        }
+    }
+
+    if (partPos) {
+        for (let i = 0; i < HASH_LEN - partPos; i++) {
+            codes[pos].push(0);
+        }
+    }
+
+    return [codes.reduce((result, code) => {
+        result = result ^ code.reduce((r, v, i) => {
+            return r + v * Math.pow(v, i);
+        }, 0);
+        return result;
+    }, 0)];
 }
 
 //long test
