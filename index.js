@@ -1,4 +1,4 @@
-const nums = require('./small-numbers');
+const myNumbers = require('./small-numbers');
 
 /**
  * non strict implementation of DSA
@@ -22,7 +22,7 @@ function generateKeys(params) {
 
     do {
         priKey = params.q - Math.round(Math.random() * params.q * 3 / 4);
-        pubKey = nums.modPow(params.g, priKey, params.p);
+        pubKey = myNumbers.modPow(params.g, priKey, params.p);
     } while (pubKey < 100);
 
     return {
@@ -68,11 +68,11 @@ function doSign(params, xKey, message, generateHash) {
                 k = params.q - Math.round(Math.random() * params.q);
 
                 // Calculate r = (g^k mod p) mod q
-                r = nums.modPow(params.g, k, params.p) % params.q;
+                r = myNumbers.modPow(params.g, k, params.p) % params.q;
 
                 // Calculate s = (k^(-1) * ( H (m) + xKey * r)) mod q
                 // (k^(-1) x) mod q -- if q is prime --> x^(q-2) mod q
-                if (r) kInverse = nums.mInverse(k, params.q);
+                if (r) kInverse = myNumbers.mInverse(k, params.q);
 
             } while (r === 0 || kInverse === 0); // In the unlikely case that r=0, start again with a different random k
 
@@ -106,15 +106,15 @@ function verify(params, yKey, sign, message, generateHash) {
     return sign.every(({r, s}, i) => {
         if (!(0 < r && r < params.q && 0 < s && s < params.q)) return false;
 
-        let w = nums.mInverse(s, params.q);
+        let w = myNumbers.mInverse(s, params.q);
         let u2 = r * w % params.q;
-        let keyU2Mod = nums.modPow(yKey, u2, params.p);
+        let keyU2Mod = myNumbers.modPow(yKey, u2, params.p);
 
         let h = hash[i];
         if (h === null) return false;
 
         let u1 = (h + 1) * w % params.q;
-        let v = ((nums.modPow(params.g, u1, params.p) * keyU2Mod) % params.p) % params.q;
+        let v = ((myNumbers.modPow(params.g, u1, params.p) * keyU2Mod) % params.p) % params.q;
 
         return v === r;
     });

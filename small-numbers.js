@@ -129,10 +129,10 @@ function mInverse (k, q) {
 //     9. Return SUCCESS and y2 mod q.
 
     //asuming q is prime  this solution can be reduced to inverse = k^(q-2) mod q
-    let inverse = modPow(k, (q-2), q);
-//    console.log(''+k+' mInverse '+q, inverse, ',  '+inverse+' * '+k+' mod '+q, inverse*k%q);
+    // noinspection UnnecessaryLocalVariableJS
+    // console.log(''+k+' mInverse '+q, inverse, ',  '+inverse+' * '+k+' mod '+q, inverse*k%q);
 
-    return inverse;
+    return modPow(k, (q-2), q);
 }
 
 
@@ -150,4 +150,4 @@ module.exports = {
     factorizeHash: factorizeHash,
     factorizeArray: factorizeArray,
     mInverse: mInverse
-}
+};

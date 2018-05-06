@@ -61,4 +61,4 @@ function generateSharedParams(pPrimeIdxMin, pPrimeIdxMax) {
 
 module.exports = {
     generateSharedParams: generateSharedParams
-}
+};
