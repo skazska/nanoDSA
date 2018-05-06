@@ -1,4 +1,5 @@
 const myNumbers = require('./small-numbers');
+const sharedParams = require('./shared-params');
 
 /**
  * non strict implementation of DSA
@@ -124,5 +125,6 @@ function verify(params, yKey, sign, message, generateHash) {
 module.exports = {
     doSign: doSign,
     verify: verify,
-    generateKeys: generateKeys
+    generateKeys: generateKeys,
+    generateParams: sharedParams.generateSharedParams
 };
